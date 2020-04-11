@@ -26,6 +26,11 @@ def get_entities(seq, suffix=False):
         >>> seq = ['B-PER', 'I-PER', 'O', 'B-LOC']
         >>> get_entities(seq)
         [('PER', 0, 1), ('LOC', 3, 3)]
+        >>> from seqeval.metrics.sequence_labeling import get_entities
+        >>> seq = ['B-PER-OBJ', 'B-PER-NOM', 'O', 'B-LOC-NOM']
+        >>> get_entities(seq)
+        [('PER-OBJ', 0, 0), ('PER-NOM', 1, 1), ('LOC-NOM', 3, 3)]
+
     """
     # for nested list
     if any(isinstance(s, list) for s in seq):
@@ -41,7 +46,7 @@ def get_entities(seq, suffix=False):
             type_ = chunk.split('-')[0]
         else:
             tag = chunk[0]
-            type_ = chunk.split('-')[-1]
+            type_ = '-'.join(chunk.split('-')[1:])
 
         if end_of_chunk(prev_tag, tag, prev_type, type_):
             chunks.append((prev_type, begin_offset, i-1))
